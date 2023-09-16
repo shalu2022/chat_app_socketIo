@@ -10,13 +10,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Button, TextField, Box, Alert } from "@mui/material";
+import { Button, TextField, Box, Alert, CircularProgress } from "@mui/material";
 
 export default function Register(props) {
   const [userDetails, setUserDetails] = useState();
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false);
-  const [severity, setSeverity] = React.useState()
+  const [severity, setSeverity] = React.useState();
+  const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
@@ -47,17 +48,28 @@ export default function Register(props) {
   };
 
   const joinChatApp = () => {
+    setLoading(true);
     axios
       .post("http://localhost:5000/api/v1/register", userDetails)
       .then((res) => {
         if (res.status === 201) {
+          setLoading(false);
           setOpen(true);
-          setError(res?.data?.message)
-          setSeverity("success")
-          setTimeout(()=>{ navigate('/login')
-        },1000)
+          setError(res?.data?.message);
+          setSeverity("success");
+          setTimeout(() => {
+            navigate("/login");
+          }, 1000);
         }
-      }).catch(err=>(setOpen(true), setError(err?.response?.data?.message), setSeverity("error")));
+      })
+      .catch(
+        (err) => (
+          setOpen(true),
+          setError(err?.response?.data?.message),
+          setSeverity("error"),
+          setLoading(false)
+        )
+      );
   };
 
   const handleClose = (event) => {
@@ -144,21 +156,24 @@ export default function Register(props) {
             inputProps={{ accept: "image/*" }}
             onChange={(e) => handleFileUpload(e)}
           />
-
           {/* <Link to={"/chat"}> */}
-          <Button
-            variant="contained"
-            color="warning"
-            sx={{
-              mt: 2,
-              /* bgcolor: "#F24C3D" */
-            }}
-            fullWidth
-            type="submit"
-            onClick={joinChatApp}
-          >
-            Join
-          </Button>
+          {loading ? (
+            <CircularProgress size={20} style={{ marginTop: "16px" }} />
+          ) : (
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{
+                mt: 2,
+                /* bgcolor: "#F24C3D" */
+              }}
+              fullWidth
+              type="submit"
+              onClick={joinChatApp}
+            >
+              Join
+            </Button>
+          )}
           <Snackbar
             open={open}
             autoHideDuration={6000}
