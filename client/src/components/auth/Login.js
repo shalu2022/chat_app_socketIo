@@ -1,32 +1,88 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setName } from "../../store/userSlice";
-
+import Snackbar from "@mui/material/Snackbar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Button, CardActionArea, TextField, Box } from "@mui/material";
+import {
+  Button,
+  CardActionArea,
+  TextField,
+  Box,
+  CircularProgress,
+  IconButton,
+  Alert,
+} from "@mui/material";
+import userService from "../../services/user.service";
+import route from "../../utils/route";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Login(props) {
+  const navigate = useNavigate();
   const { socket } = props;
-  const [userName, setUserName] = useState("");
+  const [userDetail, setUserDetail] = useState({ userName: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [responseMsg, setResponseMsg] = useState("");
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState();
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
 
-  // const joinChatApp = () => {
-  //   if (userName === "") {
-  //     setError("User Name is Required");
-  //     // console.log("No user", error);
-  //   } else {
-  //     socket.emit("join_user", userName);
-  //     dispatch(setName(userName));
-  //     setUserName("");
-  //     setError("");
-  //   }
-  // };
-  // console.log("user val", error);
+  const handleChange = (e) => {
+    setUserDetail({
+      ...userDetail,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (userDetail?.userName === "" || userDetail?.password === "") {
+      setError("User Name and Password are Required Fields");
+    }
+    if (!error) {
+      try {
+        setLoading(true);
+        const res = await userService.userLogin(userDetail);
+        setUserDetail({ userName: "", password: "" });
+        setError("");
+        setOpen(true);
+        setResponseMsg(res.message);
+        setSeverity("success");
+        navigate('/chat');
+      } catch (err) {
+        setOpen(true);
+        setResponseMsg(err?.response?.data?.message);
+        setSeverity("error");
+      } finally {
+        setLoading(false);
+      }
+    }
+    // socket.emit("join_user", userName);
+    // dispatch(setName(userName));
+  };
+
+  const handleClose = (event) => {
+    setOpen(false);
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
   return (
     <Box
       display="flex"
@@ -52,19 +108,20 @@ export default function Login(props) {
             fontWeight="500"
             fontSize="22px"
           >
-            Join Chat
+            Login
           </Typography>
-          <form>
+          <form onSubmit={(e)=>handleLogin(e)}>
             <TextField
               id="outlined-basic"
               label="Name"
               variant="outlined"
               fontWeight="300"
               fullWidth
-              value={userName}
+              name="userName"
+              value={userDetail?.userName}
               size="small"
               sx={{ mt: 2 }}
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => handleChange(e)}
             />
             <TextField
               id="outlined-basic"
@@ -72,12 +129,15 @@ export default function Login(props) {
               variant="outlined"
               fontWeight="300"
               fullWidth
-              // value={password}
+              name="password"
+              value={userDetail?.password}
               size="small"
               sx={{ mt: 2 }}
-              // onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => handleChange(e)}
             />
-            <Link to={"/chat"}>
+            {loading ? (
+              <CircularProgress size={20} style={{ marginTop: "16px" }} />
+            ) : (
               <Button
                 variant="contained"
                 color="warning"
@@ -87,14 +147,13 @@ export default function Login(props) {
                 }}
                 fullWidth
                 type="submit"
-                // onClick={joinChatApp}
               >
                 Log In
               </Button>
-            </Link>
+            )}
           </form>
-          <Link to="/register" style={{textDecoration:"none"}}>
-            <Typography style={{ marginTop: "10px", fontSize:"12px" }}>
+          <Link to="/register" style={{ textDecoration: "none" }}>
+            <Typography style={{ marginTop: "10px", fontSize: "12px" }}>
               Do not have account? Register Now!
             </Typography>
           </Link>
@@ -103,6 +162,14 @@ export default function Login(props) {
           </Typography>
         </CardContent>
       </Card>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        action={action}
+      >
+        <Alert severity={severity}>{responseMsg}</Alert>
+      </Snackbar>
     </Box>
   );
 }
