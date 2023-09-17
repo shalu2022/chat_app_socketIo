@@ -1,7 +1,8 @@
 const route = {
     LOGIN: 'login',
     REGISTER: 'register',
-    CHAT: 'chat'
+    CHAT: 'chat',
+    DASHBOARD: 'dashboard'
 }
 
 export default route;
