@@ -17,7 +17,8 @@ const registerUser = asyncErrorHandler(async (req, res) => {
 
   if (existUser) {
     res.status(400).json({
-    message: "Username already exist"});
+      message: "Username already exist",
+    });
   }
 
   const user = await User.create({
@@ -29,15 +30,17 @@ const registerUser = asyncErrorHandler(async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      data: { _id: user._id,
-      userName: user.userName,
-      password: user.password,
-      profilePic: user.profilePic,
-      token: getToken({ id: user._id}),
-    },
-    message: "user Created Successfully!" })
+      data: {
+        _id: user._id,
+        userName: user.userName,
+        password: user.password,
+        profilePic: user.profilePic,
+        token: getToken({ id: user._id }),
+      },
+      message: "user Created Successfully!",
+    });
   } else {
-    res.status(400).json({message: "User not created"});
+    res.status(400).json({ message: "User not created" });
   }
 });
 
@@ -46,17 +49,20 @@ const loginUser = asyncErrorHandler(async (req, res) => {
 
   const user = await User.findOne({ userName });
 
-  if (user && (await user.matchPassword(user.password))) {
-    res.json({
-      _id: user._id,
-      userName: user.userName,
-      password: user.password,
-      profilePic: user.profilePic,
-      token: getToken({ id: user._id }),
+  if (user && (await user.matchPassword(password))) {
+    res.status(201).json({
+      data: {
+        _id: user._id,
+        userName: user.userName,
+        password: user.password,
+        profilePic: user.profilePic,
+        token: getToken({ id: user._id }),
+      },
+      message: "Login Success",
     });
-  }else{
+  } else {
     res.status(401);
-    throw new Error("Invalid User Name or Password")
+    throw new Error("Invalid User Name or Password");
   }
 });
 

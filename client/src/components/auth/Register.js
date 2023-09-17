@@ -13,8 +13,8 @@ import Typography from "@mui/material/Typography";
 import { Button, TextField, Box, Alert, CircularProgress } from "@mui/material";
 
 export default function Register(props) {
-  const [userDetails, setUserDetails] = useState();
-  const [error, setError] = useState("");
+  const [userDetails, setUserDetails] = useState({ userName: '', password: ''});
+  const [responseMsg, setResponseMsg] = useState("");
   const [open, setOpen] = React.useState(false);
   const [severity, setSeverity] = React.useState();
   const [loading, setLoading] = React.useState(false);
@@ -28,7 +28,6 @@ export default function Register(props) {
       [val.target.name]: val.target.value,
     });
   };
-  // console.log("user vals", userDetails);
   const getBase64 = (file, cb) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -55,7 +54,7 @@ export default function Register(props) {
         if (res.status === 201) {
           setLoading(false);
           setOpen(true);
-          setError(res?.data?.message);
+          setResponseMsg(res?.data?.message);
           setSeverity("success");
           setTimeout(() => {
             navigate("/login");
@@ -65,7 +64,7 @@ export default function Register(props) {
       .catch(
         (err) => (
           setOpen(true),
-          setError(err?.response?.data?.message),
+          setResponseMsg(err?.response?.data?.message),
           setSeverity("error"),
           setLoading(false)
         )
@@ -124,7 +123,7 @@ export default function Register(props) {
             variant="outlined"
             fontWeight="300"
             fullWidth
-            value={userDetails?.userName || ""}
+            value={userDetails?.userName}
             size="small"
             sx={{ mt: 2 }}
             onChange={(e) => currUser(e)}
@@ -136,7 +135,7 @@ export default function Register(props) {
             fontWeight="300"
             name="password"
             fullWidth
-            value={userDetails?.password || ""}
+            value={userDetails?.password}
             size="small"
             sx={{ mt: 2 }}
             onChange={(e) => currUser(e)}
@@ -170,19 +169,20 @@ export default function Register(props) {
               fullWidth
               type="submit"
               onClick={joinChatApp}
+              disabled={ userDetails?.userName === '' || userDetails?.password === ''}
             >
               Join
             </Button>
           )}
-          <Snackbar
+          {responseMsg && <Snackbar
             open={open}
             autoHideDuration={6000}
             onClose={handleClose}
             // message="User Registered Successfully"
             action={action}
           >
-            <Alert severity={severity}>{error}</Alert>
-          </Snackbar>
+            <Alert severity={severity}>{responseMsg}</Alert>
+          </Snackbar>}
           {/* </Link> */}
           {/* </form> */}
         </CardContent>
