@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setName } from "../../store/userSlice";
 import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -11,9 +9,13 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Button, TextField, Box, Alert, CircularProgress } from "@mui/material";
+import userService from "../../services/user.service";
 
 export default function Register(props) {
-  const [userDetails, setUserDetails] = useState({ userName: '', password: ''});
+  const [userDetails, setUserDetails] = useState({
+    userName: "",
+    password: "",
+  });
   const [responseMsg, setResponseMsg] = useState("");
   const [open, setOpen] = React.useState(false);
   const [severity, setSeverity] = React.useState();
@@ -46,29 +48,23 @@ export default function Register(props) {
     });
   };
 
-  const joinChatApp = () => {
-    setLoading(true);
-    axios
-      .post("http://localhost:5000/api/v1/register", userDetails)
-      .then((res) => {
-        if (res.status === 201) {
-          setLoading(false);
-          setOpen(true);
-          setResponseMsg(res?.data?.message);
-          setSeverity("success");
-          setTimeout(() => {
-            navigate("/login");
-          }, 1000);
-        }
-      })
-      .catch(
-        (err) => (
-          setOpen(true),
-          setResponseMsg(err?.response?.data?.message),
-          setSeverity("error"),
-          setLoading(false)
-        )
-      );
+  const joinChatApp = async () => {
+    try {
+      setLoading(true);
+      const res = await userService.userRegister(userDetails);
+      setLoading(false);
+      setOpen(true);
+      setResponseMsg(res?.data?.message);
+      setSeverity("success");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (err) {
+      setOpen(true),
+        setResponseMsg(err?.response?.data?.message),
+        setSeverity("error"),
+        setLoading(false);
+    }
   };
 
   const handleClose = (event) => {
@@ -169,20 +165,24 @@ export default function Register(props) {
               fullWidth
               type="submit"
               onClick={joinChatApp}
-              disabled={ userDetails?.userName === '' || userDetails?.password === ''}
+              disabled={
+                userDetails?.userName === "" || userDetails?.password === ""
+              }
             >
               Join
             </Button>
           )}
-          {responseMsg && <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            // message="User Registered Successfully"
-            action={action}
-          >
-            <Alert severity={severity}>{responseMsg}</Alert>
-          </Snackbar>}
+          {responseMsg && (
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              // message="User Registered Successfully"
+              action={action}
+            >
+              <Alert severity={severity}>{responseMsg}</Alert>
+            </Snackbar>
+          )}
           {/* </Link> */}
           {/* </form> */}
         </CardContent>
