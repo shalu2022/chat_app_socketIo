@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setName } from "../../store/userSlice";
 import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,11 +8,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Button, TextField, Box, Alert } from "@mui/material";
+import { Button, TextField, Box, Alert, CircularProgress } from "@mui/material";
+import userService from "../../services/user.service";
 
 export default function Register(props) {
-  const [userDetails, setUserDetails] = useState();
-  const [error, setError] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    userName: "",
+    password: "",
+  });
+  const [responseMsg, setResponseMsg] = useState("");
   const [open, setOpen] = React.useState(false);
   const [severity, setSeverity] = React.useState()
   const dispatch = useDispatch();
@@ -46,18 +48,23 @@ export default function Register(props) {
     });
   };
 
-  const joinChatApp = () => {
-    axios
-      .post("http://localhost:5000/api/v1/register", userDetails)
-      .then((res) => {
-        if (res.status === 201) {
-          setOpen(true);
-          setError(res?.data?.message)
-          setSeverity("success")
-          setTimeout(()=>{ navigate('/login')
-        },1000)
-        }
-      }).catch(err=>(setOpen(true), setError(err?.response?.data?.message), setSeverity("error")));
+  const joinChatApp = async () => {
+    try {
+      setLoading(true);
+      const res = await userService.userRegister(userDetails);
+      setLoading(false);
+      setOpen(true);
+      setResponseMsg(res?.data?.message);
+      setSeverity("success");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (err) {
+      setOpen(true),
+        setResponseMsg(err?.response?.data?.message),
+        setSeverity("error"),
+        setLoading(false);
+    }
   };
 
   const handleClose = (event) => {
@@ -146,28 +153,37 @@ export default function Register(props) {
           />
 
           {/* <Link to={"/chat"}> */}
-          <Button
-            variant="contained"
-            color="warning"
-            sx={{
-              mt: 2,
-              /* bgcolor: "#F24C3D" */
-            }}
-            fullWidth
-            type="submit"
-            onClick={joinChatApp}
-          >
-            Join
-          </Button>
-          <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            // message="User Registered Successfully"
-            action={action}
-          >
-            <Alert severity={severity}>{error}</Alert>
-          </Snackbar>
+          {loading ? (
+            <CircularProgress size={20} style={{ marginTop: "16px" }} />
+          ) : (
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{
+                mt: 2,
+                /* bgcolor: "#F24C3D" */
+              }}
+              fullWidth
+              type="submit"
+              onClick={joinChatApp}
+              disabled={
+                userDetails?.userName === "" || userDetails?.password === ""
+              }
+            >
+              Join
+            </Button>
+          )}
+          {responseMsg && (
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              // message="User Registered Successfully"
+              action={action}
+            >
+              <Alert severity={severity}>{responseMsg}</Alert>
+            </Snackbar>
+          )}
           {/* </Link> */}
           {/* </form> */}
         </CardContent>
