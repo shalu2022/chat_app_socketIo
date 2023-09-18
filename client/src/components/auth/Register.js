@@ -18,7 +18,8 @@ export default function Register(props) {
   });
   const [responseMsg, setResponseMsg] = useState("");
   const [open, setOpen] = React.useState(false);
-  const [severity, setSeverity] = React.useState()
+  const [severity, setSeverity] = React.useState();
+  const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ export default function Register(props) {
       [val.target.name]: val.target.value,
     });
   };
-  // console.log("user vals", userDetails);
   const getBase64 = (file, cb) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -119,7 +119,7 @@ export default function Register(props) {
             variant="outlined"
             fontWeight="300"
             fullWidth
-            value={userDetails?.userName || ""}
+            value={userDetails?.userName}
             size="small"
             sx={{ mt: 2 }}
             onChange={(e) => currUser(e)}
@@ -131,7 +131,7 @@ export default function Register(props) {
             fontWeight="300"
             name="password"
             fullWidth
-            value={userDetails?.password || ""}
+            value={userDetails?.password}
             size="small"
             sx={{ mt: 2 }}
             onChange={(e) => currUser(e)}
@@ -151,7 +151,6 @@ export default function Register(props) {
             inputProps={{ accept: "image/*" }}
             onChange={(e) => handleFileUpload(e)}
           />
-
           {/* <Link to={"/chat"}> */}
           {loading ? (
             <CircularProgress size={20} style={{ marginTop: "16px" }} />
