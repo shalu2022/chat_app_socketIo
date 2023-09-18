@@ -1,10 +1,20 @@
+import {useSelector} from 'react-redux'
 import { Box, IconButton, TextField } from "@mui/material";
 import React, { useState } from "react";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import roomService from '../services/room.service'
 
 function Searchbar() {
   const [newRoomName, setNewRoomName] = useState("");
-  const addNewRoom = () => {};
+  const user =  useSelector(state => state.user.user);
+  const addNewRoom = async () => {
+    const payload = {
+      roomName: newRoomName,
+      groupAdmin: user._id
+    }
+    const res = await roomService.addRoom(payload);
+  };
+
   return (
     <Box
       display="flex"

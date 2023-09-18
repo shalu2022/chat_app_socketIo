@@ -48,6 +48,7 @@ export default function Login(props) {
       try {
         setLoading(true);
         const res = await userService.userLogin(userDetail);
+        dispatch(setName(res.data));
         setUserDetail({ userName: "", password: "" });
         setError("");
         setOpen(true);
@@ -63,7 +64,6 @@ export default function Login(props) {
       }
     }
     // socket.emit("join_user", userName);
-    // dispatch(setName(userName));
   };
 
   const handleClose = (event) => {
