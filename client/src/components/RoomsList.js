@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Room from "./Room";
 import { Box, ListItemButton } from "@mui/material";
 import List from "@mui/material/List";
 
-function RoomsList() {
+function RoomsList({ rooms }) {
   const [selectedIndex, setSelectedIndex] = React.useState();
   const [isActive, setIsActive] = useState(false);
 
@@ -44,46 +44,22 @@ function RoomsList() {
         }}
         disablePadding
       >
-        <ListItemButton
-          selected={selectedIndex === 0}
-          onClick={(event) => handleListItemClick(event, 0)}
-        >
-          <Room
-            roomName={"Room-1"}
-            peopleJoined={"33"}
-            isActive={selectedIndex === 0}
-          />
-        </ListItemButton>
-        <ListItemButton
-          selected={selectedIndex === 1}
-          onClick={(event) => handleListItemClick(event, 1)}
-        >
-          <Room
-            roomName={"Room-2"}
-            peopleJoined={"9"}
-            isActive={selectedIndex === 1}
-          />
-        </ListItemButton>
-        <ListItemButton
-          selected={selectedIndex === 2}
-          onClick={(event) => handleListItemClick(event, 2)}
-        >
-          <Room
-            roomName={"Room-3"}
-            peopleJoined={"10"}
-            isActive={selectedIndex === 2}
-          />
-        </ListItemButton>
-        <ListItemButton
-          selected={selectedIndex === 3}
-          onClick={(event) => handleListItemClick(event, 3)}
-        >
-          <Room
-            roomName={"Room-4"}
-            peopleJoined={"54"}
-            isActive={selectedIndex === 3}
-          />
-        </ListItemButton>
+        {rooms &&
+          rooms?.map((room, index) => {
+            return (
+              <ListItemButton
+                key={room?._id}
+                selected={selectedIndex === index}
+                onClick={(event) => handleListItemClick(event, 0)}
+              >
+                <Room
+                  roomName={room?.roomName}
+                  peopleJoined={room?.users?.length}
+                  isActive={selectedIndex === index}
+                />
+              </ListItemButton>
+            );
+          })}
       </List>
     </Box>
   );

@@ -20,7 +20,7 @@ function ChatInput(props) {
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-      console.log("sending mess")
+      console.log("sending mess");
       await socket.emit("send_message", messageData);
     }
   };
@@ -47,12 +47,8 @@ function ChatInput(props) {
         onChange={(e) => setCurrentMessage(e.target.value)}
         fullWidth
       />
-      <IconButton>
-        <AddBoxIcon
-          fontSize="large"
-          sx={{ color: "#F24C3D" }}
-          onClick={sendMessage}
-        />
+      <IconButton onClick={sendMessage}>
+        <AddBoxIcon fontSize="large" sx={{ color: "#F24C3D" }} />
       </IconButton>
     </Box>
   );

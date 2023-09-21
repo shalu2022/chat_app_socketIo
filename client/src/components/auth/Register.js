@@ -60,10 +60,10 @@ export default function Register(props) {
         navigate("/login");
       }, 1000);
     } catch (err) {
-      setOpen(true),
-        setResponseMsg(err?.response?.data?.message),
-        setSeverity("error"),
-        setLoading(false);
+      setOpen(true);
+      setResponseMsg(err?.response?.data?.message);
+      setSeverity("error");
+      setLoading(false);
     }
   };
 
