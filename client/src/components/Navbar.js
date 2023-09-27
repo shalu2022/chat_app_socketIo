@@ -35,6 +35,7 @@ function ResponsiveAppBar(props) {
     // console.log("val of e", val);
     if (val === "Logout") {
       dispatch(setName(""));
+      localStorage.clear();
     }
   };
 
@@ -76,7 +77,7 @@ function ResponsiveAppBar(props) {
               </Typography>
             ) : null}
           </Box>
-          {!chatBoxScreen && (
+          {chatBoxScreen && (
             <Box>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
