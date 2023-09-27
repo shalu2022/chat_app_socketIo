@@ -19,7 +19,7 @@ export default function Room(props) {
   return (
     <ListItem
       display="flex"
-      justifyContent="center"
+      // justifyContent="center"
       alignItems="center"
       sx={{
         backgroundColor: "background.paper",

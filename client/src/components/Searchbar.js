@@ -1,18 +1,22 @@
-import {useSelector} from 'react-redux'
+import { useSelector } from "react-redux";
 import { Box, IconButton, TextField } from "@mui/material";
 import React, { useState } from "react";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import roomService from '../services/room.service'
+import roomService from "../services/room.service";
 
-function Searchbar() {
+function Searchbar({ getAllRooms }) {
   const [newRoomName, setNewRoomName] = useState("");
-  const user =  useSelector(state => state.user.user);
+  const user = useSelector((state) => state.user.user);
+
   const addNewRoom = async () => {
     const payload = {
       roomName: newRoomName,
-      groupAdmin: user._id
-    }
+      groupAdmin: user?._id,
+    };
     const res = await roomService.addRoom(payload);
+    if (res.status == 200) {
+      getAllRooms();
+    }
   };
 
   return (
@@ -30,12 +34,8 @@ function Searchbar() {
         onChange={(e) => setNewRoomName(e.target.value)}
         fullWidth
       />
-      <IconButton>
-        <AddBoxIcon
-          fontSize="large"
-          sx={{ color: "#F24C3D" }}
-          onClick={addNewRoom}
-        />
+      <IconButton onClick={addNewRoom}>
+        <AddBoxIcon fontSize="large" sx={{ color: "#F24C3D" }} />
       </IconButton>
     </Box>
   );

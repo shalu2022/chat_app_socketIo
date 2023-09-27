@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Room from "./Room";
 import { Box, ListItemButton } from "@mui/material";
 import List from "@mui/material/List";
 
-function RoomsList() {
+function RoomsList({ rooms }) {
   const [selectedIndex, setSelectedIndex] = React.useState();
   const [isActive, setIsActive] = useState(false);
 

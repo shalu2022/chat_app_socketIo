@@ -6,7 +6,7 @@ const roomSchema = new Schema(
       type: String,
     },
     isGroupChat: {
-      type: boolean,
+      type: Boolean,
       default: false
     }, 
     groupAdmin: {
