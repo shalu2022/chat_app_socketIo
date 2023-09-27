@@ -50,7 +50,7 @@ function RoomsList({ rooms }) {
               <ListItemButton
                 key={room?._id}
                 selected={selectedIndex === index}
-                onClick={(event) => handleListItemClick(event, 0)}
+                onClick={(event) => handleListItemClick(event, index)}
               >
                 <Room
                   roomName={room?.roomName}

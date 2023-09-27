@@ -54,6 +54,8 @@ export default function Login(props) {
         setOpen(true);
         setResponseMsg(res.message);
         setSeverity("success");
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
+        localStorage.setItem('token', JSON.stringify(res.data.token))
         navigate('/chat');
       } catch (err) {
         setOpen(true);
