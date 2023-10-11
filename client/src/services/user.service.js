@@ -1,10 +1,8 @@
-import axios from 'axios';
-const baseUrl = `${process.env.REACT_APP_BASE_URL}`
-
+import axiosInstance from './axiosInstance';
 class userService {
     async userRegister(userDetails){
         try{
-            const response = await axios.post(`${baseUrl}/register`, userDetails);
+            const response = await axiosInstance.post(`/register`, userDetails);
             return response
         } catch (err) {
             throw err.response;
@@ -13,7 +11,7 @@ class userService {
 
     async userLogin(userDetails) {
         try {
-            const response = await axios.post(`${baseUrl}/login`, userDetails);
+            const response = await axiosInstance.post(`/login`, userDetails);
             return response.data
         } catch (err) {
             throw err.data.message;
