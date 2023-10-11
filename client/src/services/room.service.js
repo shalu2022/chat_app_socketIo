@@ -1,10 +1,8 @@
-import axios from "axios";
-const baseUrl = `${process.env.REACT_APP_BASE_URL}`;
-// console.log()
+import axiosInstance from './axiosInstance';
 class roomService {
   async getAllRooms() {
     try {
-      const response = await axios.get(`${baseUrl}/getAllRooms`);
+      const response = await axiosInstance.get('/getAllRooms');
       return response;
     } catch (err) {
       throw err.message;
@@ -12,7 +10,7 @@ class roomService {
   }
   async addRoom(payload) {
     try {
-      const response = await axios.post(`${baseUrl}/addRoom`, payload);
+      const response = await axiosInstance.post('/addRoom', payload);
       return response;
     } catch (err) {
       throw err.message;
