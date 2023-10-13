@@ -16,9 +16,8 @@ const registerUser = asyncErrorHandler(async (req, res) => {
   const existUser = await User.findOne({ userName });
 
   if (existUser) {
-    res.status(400).json({
-      message: "Username already exist",
-    });
+    res.status(400);
+    throw new Error("Username already exist");
   }
 
   const user = await User.create({
@@ -36,11 +35,11 @@ const registerUser = asyncErrorHandler(async (req, res) => {
         password: user.password,
         profilePic: user.profilePic,
         token: getToken({ id: user._id }),
-      },
-      message: "user Created Successfully!",
+      }
     });
   } else {
-    res.status(400).json({ message: "User not created" });
+    res.status(400);
+    throw new Error("User not created");
   }
 });
 
@@ -57,9 +56,7 @@ const loginUser = asyncErrorHandler(async (req, res) => {
         password: user.password,
         profilePic: user.profilePic,
         token: getToken({ id: user._id }),
-      },
-      message: "Login Success",
-    });
+      }})
   } else {
     res.status(401);
     throw new Error("Invalid User Name or Password");
