@@ -2,10 +2,16 @@ const asyncErrorHandler = require("express-async-handler");
 const Room = require("../models/roomModel");
 
 const getRoomDetails = asyncErrorHandler(async (req, res) => {
-  const result = await Room.find();
-  if (result) {
-    res.status(200).json({data: result});
+  try{
+    const result = await Room.find();
+    if (result) {
+      res.status(200).json({data: result});
+    }
+  }catch(error){
+    res.status(400)
+    throw new Error("No room found")
   }
+  
 });
 
 const addNewRoom = asyncErrorHandler(async (req, res) => {
@@ -16,7 +22,6 @@ const addNewRoom = asyncErrorHandler(async (req, res) => {
   }
   const roomExist = await Room.findOne({ roomName });
 
-  console.log("shale", roomExist);
   if (roomExist) {
     res.status(400);
     throw new Error("Room Name already exist");
