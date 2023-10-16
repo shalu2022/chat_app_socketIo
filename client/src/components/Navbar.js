@@ -9,8 +9,11 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import SearchIcon from "@mui/icons-material/Search";
+
 import { setName } from "../store/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { InputBase } from "@mui/material";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -18,10 +21,12 @@ function ResponsiveAppBar(props) {
   const { chatBoxScreen } = props;
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [searchKeyword, setSearchKeyword] = React.useState('');
   const dispatch = useDispatch();
   const activeRoom = useSelector((state) => state?.activeRoomName?.activeRoom);
-  const peopleJoined = useSelector((state) => state?.activeRoomName?.peopleJoined);
-
+  const peopleJoined = useSelector(
+    (state) => state?.activeRoomName?.peopleJoined
+  );
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -77,7 +82,7 @@ function ResponsiveAppBar(props) {
               </Typography>
             ) : null}
           </Box>
-          {chatBoxScreen && (
+          {chatBoxScreen ? (
             <Box>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -109,6 +114,18 @@ function ResponsiveAppBar(props) {
                   </MenuItem>
                 ))}
               </Menu>
+            </Box>
+          ) : (
+            <Box>
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Search Room..."
+                value={searchKeyword}
+                onChange={(e)=> setSearchKeyword(e.target.value)}
+              />
+              <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+                <SearchIcon />
+              </IconButton>
             </Box>
           )}
         </Toolbar>
